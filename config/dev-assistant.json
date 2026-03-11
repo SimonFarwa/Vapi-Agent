@@ -80,10 +80,92 @@
             "content": "Alles notiert. Ich schaue gleich nach freien Terminen für Sie."
           }
         ]
+      },
+      {
+        "type": "function",
+        "server": {
+          "url": "https://n8n.farwa-wanddruck.de/webhook/vapi-server"
+        },
+        "function": {
+          "name": "check_available_slots",
+          "parameters": {
+            "type": "object",
+            "required": [
+              "startTime",
+              "endTime"
+            ],
+            "properties": {
+              "startTime": {
+                "type": "string",
+                "description": "Beginn des Zeitraums in ISO 8601 UTC, z.B. 2026-03-12T00:00:00.000Z"
+              },
+              "endTime": {
+                "type": "string",
+                "description": "Ende des Zeitraums in ISO 8601 UTC, z.B. 2026-03-17T23:59:00.000Z"
+              }
+            }
+          },
+          "description": "Prüfe verfügbare Terminslots für ein Beratungsgespräch. Gibt freie Zeitfenster zurück."
+        },
+        "messages": [
+          {
+            "type": "request-start",
+            "content": "Einen Moment, ich schaue nach freien Terminen."
+          }
+        ]
+      },
+      {
+        "type": "function",
+        "server": {
+          "url": "https://n8n.farwa-wanddruck.de/webhook/vapi-server"
+        },
+        "function": {
+          "name": "book_appointment",
+          "parameters": {
+            "type": "object",
+            "required": [
+              "start",
+              "firstName",
+              "lastName"
+            ],
+            "properties": {
+              "start": {
+                "type": "string",
+                "description": "Startzeit des Termins in ISO 8601 UTC. Muss ein freier Slot sein."
+              },
+              "firstName": {
+                "type": "string",
+                "description": "Vorname"
+              },
+              "lastName": {
+                "type": "string",
+                "description": "Nachname"
+              },
+              "email": {
+                "type": "string",
+                "description": "Email. Falls nicht verfügbar: noreply@farpa.de"
+              },
+              "phone": {
+                "type": "string",
+                "description": "Telefonnummer des Anrufers"
+              },
+              "notes": {
+                "type": "string",
+                "description": "Anliegen des Anrufers"
+              }
+            }
+          },
+          "description": "Buche einen Beratungstermin. start muss ein freier Slot aus check_available_slots sein."
+        },
+        "messages": [
+          {
+            "type": "request-start",
+            "content": "Ich buche den Termin für Sie."
+          }
+        ]
       }
     ],
     "toolIds": [
-      "ecf36068-9ee1-4087-b6aa-2bb8e3915197",
       "0f6c2a21-be4a-4859-b17a-6ce134c2ef36"
     ],
     "messages": [
