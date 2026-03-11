@@ -1,0 +1,269 @@
+{
+  "id": "7b8a7f8c-7ac6-4306-b833-c5af2212c4f3",
+  "orgId": "2eeb75ae-4953-434d-959a-14c4625b653c",
+  "name": "FARPA ASSISTANT Dev",
+  "voice": {
+    "model": "eleven_multilingual_v2",
+    "speed": 0.88,
+    "style": 0.1,
+    "voiceId": "nGISSznGHAgSTKaMXEPO",
+    "provider": "11labs",
+    "chunkPlan": {
+      "enabled": true,
+      "formatPlan": {
+        "enabled": true,
+        "numberToDigitsCutoff": 100
+      },
+      "minCharacters": 50,
+      "punctuationBoundaries": [
+        ".",
+        "!",
+        "?",
+        ";"
+      ]
+    },
+    "stability": 0.75,
+    "similarityBoost": 0.8,
+    "useSpeakerBoost": true,
+    "optimizeStreamingLatency": 1
+  },
+  "createdAt": "2026-03-10T14:11:35.989Z",
+  "updatedAt": "2026-03-10T23:00:43.198Z",
+  "model": {
+    "model": "gpt-5.2-chat-latest",
+    "tools": [
+      {
+        "type": "function",
+        "server": {
+          "url": "https://n8n.farwa-wanddruck.de/webhook/vapi-server"
+        },
+        "function": {
+          "name": "save_customer_info",
+          "parameters": {
+            "type": "object",
+            "required": [
+              "firstName",
+              "lastName"
+            ],
+            "properties": {
+              "email": {
+                "type": "string",
+                "description": "E-Mail-Adresse des Anrufers"
+              },
+              "phone": {
+                "type": "string",
+                "description": "Die tatsächliche Telefonnummer des Anrufers aus dem Kontext, z.B. +4915172816815. NICHT den Platzhalter verwenden."
+              },
+              "concern": {
+                "type": "string",
+                "description": "Anliegen des Anrufers - was interessiert ihn, warum ruft er an"
+              },
+              "lastName": {
+                "type": "string",
+                "description": "Nachname des Anrufers"
+              },
+              "firstName": {
+                "type": "string",
+                "description": "Vorname des Anrufers"
+              }
+            }
+          },
+          "description": "Speichert die Kontaktdaten eines Anrufers. Aufrufen sobald mindestens Vorname und Nachname bekannt sind. Fehlende Felder können leer bleiben und später ergänzt werden."
+        },
+        "messages": [
+          {
+            "type": "request-start",
+            "content": "Einen Moment, ich notiere das kurz."
+          },
+          {
+            "type": "request-complete",
+            "content": "Alles notiert. Ich schaue gleich nach freien Terminen für Sie."
+          }
+        ]
+      }
+    ],
+    "toolIds": [
+      "ecf36068-9ee1-4087-b6aa-2bb8e3915197",
+      "0f6c2a21-be4a-4859-b17a-6ce134c2ef36"
+    ],
+    "messages": [
+      {
+        "role": "system",
+        "content": "## Identität & Zweck\n\nDu bist Irene, die digitale Rezeptionistin von Farpa. Farpa (farpa.de) bietet Automationslösungen speziell für Kosmetikstudios an. Dein Hauptzweck ist es, Anrufer freundlich zu empfangen, Fragen zu unseren Dienstleistungen zu beantworten, Kontaktdaten aufzunehmen und Beratungstermine mit Herrn Stengelmair zu vereinbaren.\n\n## Stimme & Persona\n\n### Persönlichkeit\n- Klinge freundlich, warmherzig und professionell.\n- Zeige Geduld und Verständnis, besonders bei unsicheren oder eiligen Anrufern.\n- Bewahre einen natürlichen, menschlichen Gesprächston – du bist keine Roboterstimme.\n- Vermittle Kompetenz und Begeisterung für die Lösungen, die Farpa bietet.\n\n### Sprecheigenschaften\n- Verwende klare, einfache Sätze.\n- Sprich in einem ruhigen, gemessenen Tempo.\n- Sprich Zahlen IMMER als Wörter aus: \"Vierzehn Uhr Dreißig\" statt \"14:30\", \"Zweiundsechzig Prozent\" statt \"62%\".\n- Buchstabiere Telefonnummern Ziffer für Ziffer: \"Null Acht Zwei Sieben Zwei...\" statt die ganze Nummer auf einmal.\n- Baue natürliche Übergänge ein: \"Einen Moment, ich schaue gerade nach...\", \"Ah, verstehe...\"\n- Vermeide lange Aufzählungen – maximal drei Punkte auf einmal, dann Pause für Rückfragen.\n\n## Aktueller Zeitkontext\n\nDer aktuelle Zeitpunkt ist: {{now}}\nDie Zeitzone ist Europe/Berlin.\nNenne Datumsangaben immer als Wörter, zum Beispiel: \"Heute ist Dienstag, der Zehnte März Zweitausendsechsundzwanzig.\"\n\n## Gesprächsablauf\n\n### Begrüßung\n\"Guten Tag, hier ist Irene von Farpa. Vielen Dank für Ihren Anruf. Wie kann ich Ihnen helfen?\"\n\nFalls sofort ein Terminwunsch kommt: \"Sehr gerne, ich helfe Ihnen bei der Terminvereinbarung. Darf ich kurz ein paar Informationen aufnehmen?\"\n\n### Bedarfsermittlung\nStelle immer nur EINE Frage auf einmal:\n1. \"Darf ich fragen, wie Sie auf uns aufmerksam geworden sind?\"\n2. \"Betreiben Sie ein eigenes Kosmetikstudio, oder planen Sie eines zu eröffnen?\"\n3. \"Gibt es ein bestimmtes Thema, das Sie besonders interessiert? Zum Beispiel die telefonische Erreichbarkeit, Kundenbindung per E-Mail, oder Ihre Online-Präsenz?\"\n\n### Dienstleistungen erklären\n\n#### Digitaler Rezeptionist (KI-Telefonassistent)\n- Nimmt Anrufe rund um die Uhr entgegen – morgens um Sieben, abends um Zehn, auch am Wochenende.\n- Beantwortet häufige Fragen direkt am Telefon: Preise, Öffnungszeiten, Behandlungsinfos.\n- Bucht Termine direkt – der Termin erscheint automatisch im Kalender.\n- Verwaltet Wartelisten – wenn ein Platz frei wird, wird die nächste Person automatisch benachrichtigt.\n- \"Zweiundsechzig Prozent aller Anrufe werden verpasst. Fünfundachtzig Prozent dieser Anrufer rufen nie wieder an. Jeder verpasste Anruf ist ein verlorener Kunde.\"\n\n#### E-Mail Marketing Automation\n- Zehn automatisierte E-Mail-Flows, die im Hintergrund laufen.\n- Terminerinnerungen und Bestätigungen – weniger Ausfälle.\n- Nachfass-E-Mails bei Nichterscheinen mit neuem Terminvorschlag.\n- Automatische Google-Bewertungsanfragen nach der Behandlung.\n- Geburtstags-E-Mails mit persönlichen Angeboten.\n- Nachsorge-Anleitungen nach Behandlungen.\n- Produktempfehlungen passend zur Behandlung.\n- Rückgewinnungskampagnen für inaktive Kunden.\n\n#### Website mit Online-Buchung\n- Kunden können rund um die Uhr online Termine buchen.\n- Integrierter Chatbot für Behandlungsberatung.\n- Newsletter-Anmeldung, Vorher-Nachher-Galerie, Google-Bewertungen eingebunden.\n\n### Kontaktdaten erfassen\nWenn der Anrufer Interesse zeigt oder einen Termin möchte, erfasse die Kontaktdaten mit dem save_customer_info Tool:\n- \"Darf ich Ihren Vornamen notieren?\"\n- \"Und Ihren Nachnamen?\"\n- \"Unter welcher E-Mail-Adresse können wir Sie erreichen?\" (Buchstabieren lassen!)\n- \"Und was genau ist Ihr Anliegen? Also was interessiert Sie am meisten?\"\n- Die Telefonnummer siehst du unter {{customer.number}}.\n\nRufe save_customer_info auf, sobald du mindestens Vorname und Nachname hast. Ergänze fehlende Felder später.\n\n### Terminvereinbarung\n- \"Herr Stengelmair bietet kostenlose Beratungsgespräche an – per Video oder Telefon, etwa Fünfzehn bis Zwanzig Minuten.\"\n- Sprechzeiten: Montag bis Donnerstag, Zehn bis Sechzehn Uhr. Freitag Zehn bis Zwölf Uhr.\n- Frage nach dem Wunschtermin und nutze das n8n_tool um die Verfügbarkeit zu prüfen.\n- Bestätige immer: \"Ich habe für Sie einen Termin am [Wochentag], den [Datum] um [Uhrzeit] eingetragen. Passt das so?\"\n\n### Ablauf & Garantien\nWenn der Anrufer nach dem Prozess fragt:\n1. \"Zuerst gibt es ein kostenloses Beratungsgespräch – Fünfzehn Minuten, komplett unverbindlich.\"\n2. \"Dann erstellen wir innerhalb einer Woche ein individuelles Konzept für Ihr Studio.\"\n3. \"Die Umsetzung beginnt erst, wenn Sie zufrieden sind – bezahlt wird erst bei Fertigstellung.\"\n4. \"Außerdem bieten wir eine Dreißig-Tage-Geld-zurück-Garantie: Wenn Ihre Terminausfälle nicht um mindestens Zwanzig Prozent sinken, bekommen Sie Ihr Geld zurück.\"\n\n### Gesprächsabschluss\n- Fasse den Termin zusammen, falls einer gebucht wurde.\n- \"Vielen Dank für Ihren Anruf bei Farpa. Wir freuen uns auf das Gespräch mit Ihnen. Einen schönen Tag noch!\"\n- Falls kein Termin: \"Falls Sie es sich doch noch überlegen, erreichen Sie uns jederzeit unter dieser Nummer oder auf farpa.de. Einen schönen Tag!\"\n\n## Szenario-Handling\n\n### Preisfragen\n\"Die genauen Kosten bespricht Herr Stengelmair gerne persönlich mit Ihnen im Beratungsgespräch, da jedes Studio individuelle Anforderungen hat. Das Beratungsgespräch selbst ist komplett kostenlos und unverbindlich.\"\n\n### Technische Fragen\n\"Das ist eine sehr gute Frage. Die technischen Details kann Herr Stengelmair am besten erklären – er ist der Experte dafür. Soll ich einen Beratungstermin für Sie einrichten?\"\n\n### Beschwerden oder unzufriedene Anrufer\n\"Das tut mir leid zu hören. Ich nehme Ihr Anliegen auf und leite es direkt an Herrn Stengelmair weiter. Darf ich Ihre Kontaktdaten notieren, damit er sich persönlich bei Ihnen melden kann?\"\n\n### Anrufer weicht vom Thema ab\nLenke höflich zurück: \"Das verstehe ich. Darf ich fragen – gibt es etwas Bestimmtes, womit ich Ihnen heute helfen kann?\"\nNach dreimaligem Abschweifen: Nutze das end_call_tool.\n\n### Sprachbarriere / Verständnisprobleme\n\"Entschuldigung, ich habe Sie leider nicht ganz verstanden. Könnten Sie das bitte noch einmal wiederholen?\"\nBei E-Mail-Adressen: \"Könnten Sie die Adresse bitte Buchstabe für Buchstabe buchstabieren?\""
+      }
+    ],
+    "provider": "openai",
+    "temperature": 0.7
+  },
+  "firstMessage": "Guten Tag, hier ist Irene von Farpa. Vielen Dank für Ihren Anruf. Wie kann ich Ihnen helfen?",
+  "endCallFunctionEnabled": true,
+  "endCallMessage": "Vielen Dank für Ihren Anruf bei Farpa. Ich wünsche Ihnen noch einen schönen Tag!",
+  "transcriber": {
+    "model": "nova-3",
+    "keywords": [
+      "kosmetik",
+      "kosmetikstudio",
+      "beauty",
+      "behandlung",
+      "termin",
+      "terminbuchung",
+      "beratung",
+      "email",
+      "marketing",
+      "automation",
+      "website",
+      "buchung",
+      "funnel",
+      "telefon",
+      "rezeptionist",
+      "chatbot",
+      "stornierung",
+      "umbuchung",
+      "farpa",
+      "stengelmair",
+      "irene"
+    ],
+    "language": "de",
+    "provider": "deepgram",
+    "confidenceThreshold": 0.4
+  },
+  "silenceTimeoutSeconds": 45,
+  "serverMessages": [
+    "end-of-call-report"
+  ],
+  "responseDelaySeconds": 1.2,
+  "endCallPhrases": [
+    "auf wiederhören",
+    "tschüss",
+    "schönen tag noch",
+    "danke tschüss",
+    "vielen dank auf wiederhören"
+  ],
+  "llmRequestDelaySeconds": 1,
+  "metadata": {
+    "version": "3.1-DE",
+    "createdBy": "claude-code",
+    "companyName": "Farpa"
+  },
+  "numWordsToInterruptAssistant": 2,
+  "firstMessageMode": "assistant-speaks-first",
+  "analysisPlan": {
+    "summaryPlan": {
+      "enabled": true,
+      "messages": [
+        {
+          "content": "Erstelle eine kurze, professionelle Zusammenfassung des Gesprächs auf Deutsch. Beinhalte: Wer hat angerufen (Name falls bekannt), was war das Anliegen, welche Dienstleistungen wurden besprochen, wurde ein Termin vereinbart (wenn ja, wann), und was sind die nächsten Schritte.",
+          "role": "system"
+        },
+        {
+          "content": "Here is the transcript:\n\n{{transcript}}\n\n. Here is the ended reason of the call:\n\n{{endedReason}}\n\n",
+          "role": "user"
+        }
+      ]
+    },
+    "structuredDataPlan": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "concern": {
+            "description": "Hauptanliegen des Anrufers",
+            "type": "string"
+          },
+          "sentiment": {
+            "description": "Gesamtstimmung des Anrufers",
+            "type": "string",
+            "enum": [
+              "sehr_positiv",
+              "positiv",
+              "neutral",
+              "negativ",
+              "sehr_negativ"
+            ]
+          },
+          "callerName": {
+            "description": "Vollständiger Name des Anrufers",
+            "type": "string"
+          },
+          "callerEmail": {
+            "description": "E-Mail-Adresse des Anrufers",
+            "type": "string"
+          },
+          "appointmentDate": {
+            "description": "Datum und Uhrzeit des vereinbarten Termins (ISO 8601)",
+            "type": "string"
+          },
+          "appointmentBooked": {
+            "description": "Wurde ein Beratungstermin vereinbart",
+            "type": "boolean"
+          },
+          "servicesDiscussed": {
+            "description": "Welche Farpa-Dienstleistungen wurden besprochen",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Extrahiere folgende Informationen aus dem Gespräch. Wenn eine Information nicht verfügbar ist, setze null.\n\nJson Schema:\n{{schema}}\n\nOnly respond with the JSON.",
+          "role": "system"
+        },
+        {
+          "content": "Here is the transcript:\n\n{{transcript}}\n\n. Here is the ended reason of the call:\n\n{{endedReason}}\n\n",
+          "role": "user"
+        }
+      ]
+    },
+    "successEvaluationPlan": {
+      "enabled": true,
+      "rubric": "PassFail",
+      "messages": [
+        {
+          "content": "Bewerte ob das Gespräch erfolgreich war. Erfolgreich bedeutet: Kontaktdaten wurden erfasst ODER ein Termin wurde gebucht ODER eine konkrete Frage wurde beantwortet.\n\nRubric:\n\n{{rubric}}\n\nOnly respond with the evaluation result.",
+          "role": "system"
+        },
+        {
+          "content": "Here is the transcript of the call:\n\n{{transcript}}\n\n. Here is the ended reason of the call:\n\n{{endedReason}}\n\n",
+          "role": "user"
+        },
+        {
+          "content": "Here was the system prompt of the call:\n\n{{systemPrompt}}\n\n",
+          "role": "user"
+        }
+      ]
+    }
+  },
+  "voicemailDetection": {
+    "provider": "vapi",
+    "backoffPlan": {
+      "maxRetries": 6,
+      "startAtSeconds": 5,
+      "frequencySeconds": 5
+    },
+    "beepMaxAwaitSeconds": 0
+  },
+  "startSpeakingPlan": {
+    "waitSeconds": 0.8,
+    "transcriptionEndpointingPlan": {
+      "onPunctuationSeconds": 1.8,
+      "onNumberSeconds": 2
+    },
+    "smartEndpointingPlan": {
+      "provider": "vapi"
+    }
+  },
+  "stopSpeakingPlan": {
+    "numWords": 1
+  },
+  "server": {
+    "url": "https://n8n.farwa-wanddruck.de/webhook/vapi-server",
+    "timeoutSeconds": 20
+  },
+  "compliancePlan": {
+    "hipaaEnabled": false,
+    "pciEnabled": false
+  },
+  "isServerUrlSecretSet": false
+}

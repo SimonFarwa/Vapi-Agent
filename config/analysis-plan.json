@@ -1,0 +1,41 @@
+{
+  "summaryPrompt": "Erstelle eine kurze, professionelle Zusammenfassung des Gesprächs auf Deutsch. Beinhalte: Wer hat angerufen (Name falls bekannt), was war das Anliegen, welche Dienstleistungen wurden besprochen, wurde ein Termin vereinbart (wenn ja, wann), und was sind die nächsten Schritte.",
+  "structuredDataPrompt": "Extrahiere folgende Informationen aus dem Gespräch. Wenn eine Information nicht verfügbar ist, setze null.",
+  "structuredDataSchema": {
+    "type": "object",
+    "properties": {
+      "callerName": {
+        "type": "string",
+        "description": "Vollständiger Name des Anrufers"
+      },
+      "callerEmail": {
+        "type": "string",
+        "description": "E-Mail-Adresse des Anrufers"
+      },
+      "concern": {
+        "type": "string",
+        "description": "Hauptanliegen des Anrufers"
+      },
+      "servicesDiscussed": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Welche Farpa-Dienstleistungen wurden besprochen"
+      },
+      "appointmentBooked": {
+        "type": "boolean",
+        "description": "Wurde ein Beratungstermin vereinbart"
+      },
+      "appointmentDate": {
+        "type": "string",
+        "description": "Datum und Uhrzeit des vereinbarten Termins (ISO 8601)"
+      },
+      "sentiment": {
+        "type": "string",
+        "enum": ["sehr_positiv", "positiv", "neutral", "negativ", "sehr_negativ"],
+        "description": "Gesamtstimmung des Anrufers"
+      }
+    }
+  },
+  "successEvaluationPrompt": "Bewerte ob das Gespräch erfolgreich war. Erfolgreich bedeutet: Kontaktdaten wurden erfasst ODER ein Termin wurde gebucht ODER eine konkrete Frage wurde beantwortet.",
+  "successEvaluationRubric": "PassFail"
+}

@@ -1,0 +1,43 @@
+{
+  "type": "function",
+  "function": {
+    "name": "save_customer_info",
+    "description": "Speichert die Kontaktdaten eines Anrufers. Aufrufen sobald mindestens Vorname und Nachname bekannt sind. Fehlende Felder können leer bleiben und später ergänzt werden.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "description": "Vorname des Anrufers"
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Nachname des Anrufers"
+        },
+        "email": {
+          "type": "string",
+          "description": "E-Mail-Adresse des Anrufers"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Telefonnummer des Anrufers"
+        },
+        "concern": {
+          "type": "string",
+          "description": "Anliegen des Anrufers - was interessiert ihn, warum ruft er an"
+        }
+      },
+      "required": ["firstName", "lastName"]
+    }
+  },
+  "messages": [
+    {
+      "type": "request-start",
+      "content": "Einen Moment, ich notiere das kurz..."
+    },
+    {
+      "type": "request-complete",
+      "content": "Perfekt, ich habe Ihre Daten notiert."
+    }
+  ]
+}
