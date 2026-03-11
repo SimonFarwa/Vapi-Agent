@@ -261,6 +261,9 @@
     "url": "https://n8n.farwa-wanddruck.de/webhook/vapi-server",
     "timeoutSeconds": 20
   },
+  "artifactPlan": {
+    "recordingEnabled": false
+  },
   "compliancePlan": {
     "hipaaEnabled": false,
     "pciEnabled": false

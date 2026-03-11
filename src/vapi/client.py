@@ -14,17 +14,19 @@ def _headers() -> dict:
     }
 
 
-def get_assistant() -> dict:
+def get_assistant(assistant_id: str | None = None) -> dict:
     """GET aktuellen Assistant-Stand von Vapi."""
-    url = f"{VAPI_BASE_URL}/assistant/{VAPI_ASSISTANT_ID}"
+    aid = assistant_id or VAPI_ASSISTANT_ID
+    url = f"{VAPI_BASE_URL}/assistant/{aid}"
     resp = httpx.get(url, headers=_headers(), timeout=TIMEOUT)
     resp.raise_for_status()
     return resp.json()
 
 
-def update_assistant(payload: dict) -> dict:
+def update_assistant(payload: dict, assistant_id: str | None = None) -> dict:
     """PATCH Assistant mit neuem Payload."""
-    url = f"{VAPI_BASE_URL}/assistant/{VAPI_ASSISTANT_ID}"
+    aid = assistant_id or VAPI_ASSISTANT_ID
+    url = f"{VAPI_BASE_URL}/assistant/{aid}"
     resp = httpx.patch(url, headers=_headers(), json=payload, timeout=TIMEOUT)
     resp.raise_for_status()
     return resp.json()

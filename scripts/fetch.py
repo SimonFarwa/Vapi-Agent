@@ -13,8 +13,17 @@ CONFIG_PATH = Path(__file__).parent.parent / "config" / "assistant.json"
 
 
 def main():
-    print("Fetching assistant from Vapi...")
-    data = get_assistant()
+    # Try to get assistant ID from existing config first
+    assistant_id = None
+    if CONFIG_PATH.exists():
+        try:
+            existing = json.loads(CONFIG_PATH.read_text())
+            assistant_id = existing.get("id")
+        except (json.JSONDecodeError, KeyError):
+            pass
+
+    print(f"Fetching assistant from Vapi (ID: {assistant_id or 'from .env'})...")
+    data = get_assistant(assistant_id=assistant_id)
     CONFIG_PATH.write_text(json.dumps(data, indent=2, ensure_ascii=False))
     print(f"Gespeichert: {CONFIG_PATH}")
     print(f"Name: {data.get('name', 'N/A')}")

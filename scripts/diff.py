@@ -42,7 +42,9 @@ def main():
         sys.exit(1)
 
     local = json.loads(CONFIG_PATH.read_text())
-    remote = get_assistant()
+    # Use assistant ID from config as authoritative source
+    assistant_id = local.get("id")
+    remote = get_assistant(assistant_id=assistant_id)
 
     diffs = deep_diff(local, remote)
     if not diffs:
