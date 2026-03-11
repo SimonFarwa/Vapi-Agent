@@ -93,7 +93,7 @@
       }
     ],
     "provider": "openai",
-    "temperature": 0.7
+    "temperature": 0.3
   },
   "firstMessage": "Guten Tag, hier ist Irene von Farpa. Vielen Dank für Ihren Anruf. Wie kann ich Ihnen helfen?",
   "endCallFunctionEnabled": true,
