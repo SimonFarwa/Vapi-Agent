@@ -3,7 +3,7 @@
   "orgId": "2eeb75ae-4953-434d-959a-14c4625b653c",
   "name": "FARPA ASSISTANT Test",
   "voice": {
-    "model": "eleven_turbo_v2_5",
+    "model": "eleven_flash_v2_5",
     "speed": 1,
     "style": 0.2,
     "voiceId": "nGISSznGHAgSTKaMXEPO",
@@ -39,46 +39,40 @@
     "temperature": 0.2,
     "emotionRecognitionEnabled": true
   },
-  "firstMessage": "Guten Tag, hier ist Irene von Farpa. Vielen Dank für Ihren Anruf. Wie kann ich Ihnen helfen?",
+  "firstMessage": "Guten Tag, hier ist Irene, die KI-Assistentin von Farpa. Wie kann ich Ihnen helfen?",
   "endCallFunctionEnabled": true,
-  "endCallMessage": "Vielen Dank für Ihren Anruf bei Architekturbüro zwo P Planungsgesellschaft mbH. Ich wünsche Ihnen noch einen schönen Tag!",
+  "endCallMessage": "Vielen Dank für Ihren Anruf bei Farpa. Ich wünsche Ihnen noch einen schönen Tag!",
   "transcriber": {
-    "model": "nova-3",
+    "model": "flux-general-multi",
     "keyterm": [
       "Farpa",
       "Stengelmair",
       "Beratungsgespräch",
-      "Digitaler Rezeptionist"
-    ],
-    "keywords": [
-      "heizung",
-      "lüftung",
-      "klima",
-      "sanitär",
-      "fliesen",
-      "schreiner",
-      "elektriker",
-      "maler",
-      "termin",
-      "buchung",
-      "umbuchung",
-      "stornierung",
-      "leistung",
-      "schaden",
-      "reparatur",
-      "wartung",
-      "installation",
-      "notfall"
+      "Digitaler Rezeptionist",
+      "Kosmetikstudio",
+      "Behandlung",
+      "Termin",
+      "Terminbuchung",
+      "Umbuchung",
+      "Stornierung",
+      "Microneedling",
+      "Wimpernverlängerung",
+      "Maniküre",
+      "Gesichtsbehandlung",
+      "Warteliste",
+      "Öffnungszeiten"
     ],
     "language": "de",
     "numerals": true,
     "provider": "deepgram",
+    "eotThreshold": 0.7,
+    "eotTimeoutMs": 1200,
     "confidenceThreshold": 0.3
   },
   "serverMessages": [
     "end-of-call-report"
   ],
-  "responseDelaySeconds": 1,
+  "responseDelaySeconds": 0,
   "endCallPhrases": [
     "auf wiederhören",
     "tschüss",
@@ -86,11 +80,11 @@
     "danke tschüss",
     "vielen dank auf wiederhören"
   ],
-  "llmRequestDelaySeconds": 1,
+  "llmRequestDelaySeconds": 0,
   "metadata": {
-    "version": "3.0-DE",
-    "createdBy": "n8n-automation",
-    "companyName": "Architekturbüro zwo P Planungsgesellschaft mbH"
+    "version": "3.1-DE",
+    "createdBy": "config-as-code",
+    "companyName": "Farpa"
   },
   "numWordsToInterruptAssistant": 2,
   "analysisPlan": {
@@ -155,7 +149,7 @@
     "recordingEnabled": false
   },
   "startSpeakingPlan": {
-    "waitSeconds": 0.6,
+    "waitSeconds": 0.4,
     "transcriptionEndpointingPlan": {
       "onPunctuationSeconds": 1.5,
       "onNumberSeconds": 1.5
@@ -165,7 +159,7 @@
     }
   },
   "stopSpeakingPlan": {
-    "numWords": 1
+    "numWords": 2
   },
   "server": {
     "url": "https://n8n.farwa-wanddruck.de/mcp-test/c95a47f5-f609-4be1-bbc3-2fff930f0304",
