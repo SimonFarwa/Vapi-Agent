@@ -1,5 +1,7 @@
 {
+  "id": "aeaedf10-d11e-4dd5-86fc-162e7a5506e4",
   "type": "function",
+  "async": false,
   "function": {
     "name": "save_customer_info",
     "description": "Speichert die Kontaktdaten eines Anrufers. Aufrufen sobald mindestens Vorname und Nachname bekannt sind. Fehlende Felder können leer bleiben und später ergänzt werden.",
@@ -34,10 +36,9 @@
     {
       "type": "request-start",
       "content": "Einen Moment, ich notiere das kurz..."
-    },
-    {
-      "type": "request-complete",
-      "content": "Perfekt, ich habe Ihre Daten notiert."
     }
-  ]
+  ],
+  "server": {
+    "url": "https://n8n.farwa-wanddruck.de/webhook/vapi-server"
+  }
 }
