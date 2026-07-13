@@ -20,13 +20,14 @@
     ]
   },
   "createdAt": "2026-01-23T10:50:18.396Z",
-  "updatedAt": "2026-07-12T19:55:09.144Z",
+  "updatedAt": "2026-07-13T09:57:25.356Z",
   "model": {
     "model": "gpt-5.2-chat-latest",
     "toolIds": [
-      "ecf36068-9ee1-4087-b6aa-2bb8e3915197",
+      "aeaedf10-d11e-4dd5-86fc-162e7a5506e4",
       "0f6c2a21-be4a-4859-b17a-6ce134c2ef36",
-      "aeaedf10-d11e-4dd5-86fc-162e7a5506e4"
+      "5492c3c9-a5f1-429c-a269-1b3284359780",
+      "2d746ab1-d93d-488b-924f-6c45cc997112"
     ],
     "messages": [
       {
@@ -164,7 +165,7 @@
     "numWords": 2
   },
   "server": {
-    "url": "https://n8n.farwa-wanddruck.de/mcp-test/c95a47f5-f609-4be1-bbc3-2fff930f0304",
+    "url": "https://n8n.farwa-wanddruck.de/webhook/vapi-server",
     "timeoutSeconds": 20
   },
   "compliancePlan": {

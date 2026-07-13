@@ -1,0 +1,39 @@
+{
+  "id": "2d746ab1-d93d-488b-924f-6c45cc997112",
+  "type": "function",
+  "name": "book_appointment",
+  "description": "Bucht den vom Anrufer gewaehlten Beratungstermin (cal.com). start = ISO 8601 UTC des gewaehlten Slots (exakt einer der zuvor von check_available_slots genannten Zeiten). firstName und lastName sind Pflicht. email default noreply@farpa.de, phone und notes optional. Erst aufrufen, wenn der Anrufer einen konkreten Slot bestaetigt hat.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "start": {
+        "type": "string",
+        "description": "Startzeit des gewaehlten Slots, ISO 8601 UTC, z.B. 2026-07-14T08:00:00.000Z"
+      },
+      "firstName": {
+        "type": "string",
+        "description": "Vorname des Anrufers"
+      },
+      "lastName": {
+        "type": "string",
+        "description": "Nachname des Anrufers"
+      },
+      "email": {
+        "type": "string",
+        "description": "E-Mail; falls unbekannt noreply@farpa.de verwenden"
+      },
+      "phone": {
+        "type": "string",
+        "description": "Telefonnummer des Anrufers"
+      },
+      "notes": {
+        "type": "string",
+        "description": "Kurze Notiz zum Anliegen"
+      }
+    },
+    "required": ["start", "firstName", "lastName"]
+  },
+  "server": {
+    "url": "https://n8n.farwa-wanddruck.de/webhook/vapi-server"
+  }
+}
