@@ -3,13 +3,13 @@
   "type": "function",
   "function": {
     "name": "book_appointment",
-    "description": "Bucht den vom Anrufer gewaehlten Beratungstermin (cal.com). start = ISO 8601 UTC des gewaehlten Slots (exakt einer der zuvor von check_available_slots genannten Zeiten). firstName und lastName sind Pflicht. email default noreply@farpa.de, phone und notes optional. Erst aufrufen, wenn der Anrufer einen konkreten Slot bestaetigt hat.",
+    "description": "Bucht den vom Anrufer gewaehlten Beratungstermin (cal.com). start = der Zeitstempel des gewaehlten Slots, EXAKT wie von check_available_slots geliefert (nicht umrechnen). firstName und lastName sind Pflicht. email default info@farpa.de, phone und notes optional. Erst aufrufen, wenn der Anrufer einen konkreten Slot bestaetigt hat.",
     "parameters": {
       "type": "object",
       "properties": {
         "start": {
           "type": "string",
-          "description": "Startzeit des gewaehlten Slots, ISO 8601 UTC, z.B. 2026-07-14T08:00:00.000Z"
+          "description": "Startzeit des gewaehlten Slots — EXAKT der Zeitstempel aus check_available_slots uebernehmen, z.B. 2026-07-15T14:00:00.000+02:00. NICHT umrechnen."
         },
         "firstName": {
           "type": "string",
