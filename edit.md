@@ -20,7 +20,12 @@ Voice-Agent "Irene" (Config-as-Code, `config/assistant.json` = Source of Truth, 
 
 **Altlasten bereinigt:** Supabase-Scripts nach `scripts/deprecated/`. CLAUDE.md nennt Supabase/WAT-Framework noch — inhaltlich veraltet, Details siehe hier.
 
+**Zweit-Assistent (NICHT Teil von Config-as-Code):** `TRAINER Frau Berger (Kaltakquise-Übung)` (`7bfee7f8-a7fe-49db-bea5-4dbe94b80e78`) — Rollenspiel-Trainer für Simons Akquise-Telefontraining, direkt via Vapi-MCP angelegt (2026-07-22), keine Telefonnummer, Nutzung per Web-Call im Vapi-Dashboard. Irene und deploy.py sind davon unberührt.
+
 ## Änderungslog
+
+### 2026-07-22 12:12 CEST — Rollenspiel-Trainer „Frau Berger" angelegt (separater Assistent)
+**Was:** Neuer Vapi-Assistent `TRAINER Frau Berger (Kaltakquise-Übung)` (`7bfee7f8-a7fe-49db-bea5-4dbe94b80e78`) via `mcp__vapi__create_assistant` — Teil des 8-Tage-Akquise-Sprints. Spielt eine skeptische Kosmetikstudio-Inhaberin (bayerisch, gestresst, gewinnbar), eröffnet in ~50 % der Übungsgespräche mit Reflex-Abwimmlern („Kein Interesse" — Simons Angstgegner), nutzt das Einwand-Repertoire aus `/root/farpa/docs/vertrieb/einwand-cheatsheet.md`, gibt auf „Stopp/Feedback" Coach-Feedback, Schwierigkeitsgrad per Ansage („Training leicht/hart"). Stack wie Irene (gpt-5.2-chat-latest, 11labs `nGISSznGHAgSTKaMXEPO` flash_v2_5, Deepgram flux-general-multi). **Warum:** Expositionstraining gegen Telefonangst ohne Publikum. **Verifiziert:** create + get_assistant OK; Livetest durch Simon steht aus. Irene/Produktion NICHT angefasst.
 
 ### 2026-07-20 13:45 CEST — (Doku) Anrufe brachen 18.–20.07. sofort ab: ElevenLabs-Abo ausgelaufen
 
