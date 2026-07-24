@@ -1,0 +1,156 @@
+{
+  "_comment": "Backup Vapi Server Handler (voqWTtrJbgMw3Mlu) vor Multi-Tool-Call-Fix am 2026-07-23. Cal-API-Key redigiert (liegt im Live-Workflow in den Node-Headern). Version: e09448f6-942b-4ce3-b063-6e0cec73f4d6, versionCounter 93.",
+  "name": "Vapi Server Handler",
+  "id": "voqWTtrJbgMw3Mlu",
+  "nodes": [
+    {
+      "parameters": { "httpMethod": "POST", "path": "vapi-server", "responseMode": "responseNode", "options": {} },
+      "id": "webhook-trigger", "name": "Vapi Webhook", "type": "n8n-nodes-base.webhook", "typeVersion": 2.1,
+      "position": [0, 0], "webhookId": "vapi-server-handler", "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rules": { "values": [
+          { "conditions": { "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 3 }, "conditions": [ { "leftValue": "={{ $json.body.message.type }}", "rightValue": "tool-calls", "operator": { "type": "string", "operation": "equals" }, "id": "e9ae3f42-ab64-4844-a515-fae151afee98" } ], "combinator": "and" } },
+          { "conditions": { "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 3 }, "conditions": [ { "leftValue": "={{ $json.body.message.type }}", "rightValue": "end-of-call-report", "operator": { "type": "string", "operation": "equals" }, "id": "ea8aa984-98b5-4501-b6ad-404eaf53476d" } ], "combinator": "and" } }
+        ] },
+        "options": { "fallbackOutput": "extra" }
+      },
+      "id": "switch-event", "name": "Event Router", "type": "n8n-nodes-base.switch", "typeVersion": 3.4, "position": [240, 0]
+    },
+    {
+      "parameters": { "respondWith": "json", "responseBody": "={{ {results: [{toolCallId: (($json.body.message.toolCallList || [])[0] || {}).id || '', result: 'Kontaktdaten gespeichert.'}]} }}", "options": {} },
+      "id": "respond-tool", "name": "Respond Tool Call", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.5, "position": [1360, -96]
+    },
+    {
+      "parameters": { "assignments": { "assignments": [
+        { "id": "summary", "name": "summary", "value": "={{ ($json.body.message.analysis || {}).summary || 'Keine Zusammenfassung verfuegbar' }}", "type": "string" },
+        { "id": "endedReason", "name": "endedReason", "value": "={{ $json.body.message.endedReason }}", "type": "string" },
+        { "id": "cost", "name": "cost", "value": "={{ $json.body.message.cost }}", "type": "number" },
+        { "id": "durationMinutes", "name": "durationMinutes", "value": "={{ Math.round(($json.body.message.durationSeconds || 0) / 60 * 10) / 10 }}", "type": "number" },
+        { "id": "sentiment", "name": "sentiment", "value": "={{ (($json.body.message.analysis || {}).structuredData || {}).sentiment || 'unbekannt' }}", "type": "string" },
+        { "id": "callerName", "name": "callerName", "value": "={{ (($json.body.message.analysis || {}).structuredData || {}).callerName || 'Unbekannt' }}", "type": "string" },
+        { "id": "appointmentBooked", "name": "appointmentBooked", "value": "={{ (($json.body.message.analysis || {}).structuredData || {}).appointmentBooked || false }}", "type": "boolean" },
+        { "id": "transcript", "name": "transcript", "value": "={{ $json.body.message.transcript }}", "type": "string" },
+        { "id": "callType", "name": "callType", "value": "={{ ($json.body.message.call || {}).type || 'unknown' }}", "type": "string" }
+      ] }, "options": {} },
+      "id": "extract-report", "name": "Extract Report Data", "type": "n8n-nodes-base.set", "typeVersion": 3.4, "position": [480, 128]
+    },
+    {
+      "parameters": { "respondWith": "json", "responseBody": "={{ {status: 'ok'} }}", "options": { "responseCode": 200 } },
+      "id": "respond-report", "name": "Respond OK", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.5, "position": [1104, 128]
+    },
+    {
+      "parameters": { "respondWith": "json", "responseBody": "={{ {status: 'ok'} }}", "options": { "responseCode": 200 } },
+      "id": "respond-default", "name": "Respond Default", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.5, "position": [480, 320]
+    },
+    {
+      "parameters": {
+        "rules": { "values": [
+          { "conditions": { "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 3 }, "conditions": [ { "leftValue": "={{ $json.body.message.toolCallList[0].function.name }}", "rightValue": "save_customer_info", "operator": { "type": "string", "operation": "equals" } } ], "combinator": "and" } },
+          { "conditions": { "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 3 }, "conditions": [ { "leftValue": "={{ $json.body.message.toolCallList[0].function.name }}", "rightValue": "check_available_slots", "operator": { "type": "string", "operation": "equals" } } ], "combinator": "and" } },
+          { "conditions": { "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 3 }, "conditions": [ { "leftValue": "={{ $json.body.message.toolCallList[0].function.name }}", "rightValue": "book_appointment", "operator": { "type": "string", "operation": "equals" } } ], "combinator": "and" } }
+        ] },
+        "options": { "fallbackOutput": "extra" }
+      },
+      "id": "d89b5ac9-663a-4a02-8081-a5cbfe7d625f", "name": "Tool Name Router", "type": "n8n-nodes-base.switch", "typeVersion": 3.4, "position": [480, -96]
+    },
+    {
+      "parameters": {
+        "url": "https://api.cal.com/v2/slots/available",
+        "sendQuery": true,
+        "queryParameters": { "parameters": [
+          { "name": "eventTypeId", "value": "6309012" },
+          { "name": "startTime", "value": "={{ $json.startTime }}" },
+          { "name": "endTime", "value": "={{ $json.endTime }}" },
+          { "name": "timeZone", "value": "Europe/Berlin" }
+        ] },
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "Authorization", "value": "Bearer CAL_API_KEY_REDACTED" },
+          { "name": "cal-api-version", "value": "2024-08-13" }
+        ] },
+        "options": { "timeout": 10000 }
+      },
+      "id": "fb5fec22-c24e-4acc-a297-5de1898153f1", "name": "Cal.com Check Slots", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [960, -304], "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": { "respondWith": "json", "responseBody": "={{ {results: [{toolCallId: $('Extract Slot Params').item.json.toolCallId, result: $json.error ? 'Fehler: Kalenderabfrage fehlgeschlagen. Bitte spaeter erneut versuchen.' : JSON.stringify($json)}]} }}", "options": {} },
+      "id": "70c7591c-ef32-4cc8-a9ef-a647c7d4c7d7", "name": "Respond Slots", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.5, "position": [1200, -304]
+    },
+    {
+      "parameters": {
+        "method": "POST", "url": "https://api.cal.com/v2/bookings",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "Authorization", "value": "Bearer CAL_API_KEY_REDACTED" },
+          { "name": "cal-api-version", "value": "2024-08-13" }
+        ] },
+        "sendBody": true, "contentType": "raw", "rawContentType": "application/json", "body": "={{ $json.body }}",
+        "options": { "timeout": 10000 }
+      },
+      "id": "dc08ac8f-d6eb-451f-b367-62aed8c0bd87", "name": "Cal.com Book", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [960, -496], "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": { "respondWith": "json", "responseBody": "={{ {results: [$json]} }}", "options": {} },
+      "id": "65357282-d27e-47ba-9058-a92713fc7944", "name": "Respond Booking", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.5, "position": [1280, -496]
+    },
+    {
+      "parameters": { "jsCode": "const crypto = require('crypto');\nconst secret = $env.HERMES_WEBHOOK_SECRET_VAPICALL;\nif (!secret) throw new Error('HERMES_WEBHOOK_SECRET_VAPICALL nicht gesetzt (env_file fehlt?)');\nconst src = $('Vapi Webhook').first().json.body || {};\nconst msg = src.message || {};\nconst sd = (msg.analysis || {}).structuredData || {};\nconst d = $input.first().json;\nconst payload = {\n  event_type: 'end-of-call-report',\n  summary: d.summary || '',\n  transcript: String(d.transcript || '').slice(0, 8000),\n  caller_name: d.callerName || 'Unbekannt',\n  caller_number: ((src.call || {}).customer || {}).number || '',\n  concern: sd.concern || '',\n  appointment_booked: d.appointmentBooked === true,\n  appointment_date: sd.appointmentDate || '',\n  sentiment: d.sentiment || ''\n};\nconst body = JSON.stringify(payload);\nconst ts = Math.floor(Date.now() / 1000).toString();\nconst sig = crypto.createHmac('sha256', secret).update(ts + '.' + body).digest('hex');\nreturn [{ json: { body, ts, sig } }];" },
+      "id": "hermes-sign-report", "name": "Hermes Sign Report", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [672, 128]
+    },
+    {
+      "parameters": {
+        "method": "POST", "url": "http://hermes-agent-hermes-agent-1:8644/webhooks/vapicall",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "Content-Type", "value": "application/json" },
+          { "name": "X-Webhook-Timestamp", "value": "={{ $json.ts }}" },
+          { "name": "X-Webhook-Signature-V2", "value": "={{ $json.sig }}" }
+        ] },
+        "sendBody": true, "contentType": "raw", "rawContentType": "application/json", "body": "={{ $json.body }}",
+        "options": { "timeout": 10000 }
+      },
+      "id": "hermes-send-report", "name": "Hermes Send Report", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [880, 128], "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": { "jsCode": "const src = $('Vapi Webhook').first().json.body || {};\nconst tc = ((src.message || {}).toolCallList || [])[0] || {};\nconst args = (tc.function || {})['arguments'] || {};\nreturn [{ json: {\n  startTime: args.startTime || '',\n  endTime: args.endTime || '',\n  toolCallId: tc.id || ''\n} }];" },
+      "id": "extract-slot-code", "name": "Extract Slot Params", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [720, -304]
+    },
+    {
+      "parameters": { "jsCode": "const src = $('Vapi Webhook').first().json.body || {};\nconst tc = ((src.message || {}).toolCallList || [])[0] || {};\nconst args = (tc.function || {})['arguments'] || {};\nconst callerNum = ((src.call || {}).customer || {}).number || '';\nlet start = args.start || '';\nconst parsed = new Date(start);\nif (start && !isNaN(parsed.getTime())) start = parsed.toISOString();\nconst firstName = args.firstName || '';\nconst lastName = args.lastName || '';\nconst phone = args.phone || callerNum || '';\nconst placeholder = ['noreply@farpa.de', ''];\nconst email = (args.email && !placeholder.includes(String(args.email).toLowerCase().trim())) ? args.email : 'info@farpa.de';\nconst notes = args.notes || '';\nconst body = JSON.stringify({\n  eventTypeId: 6309012,\n  start: start,\n  attendee: { name: (firstName + ' ' + lastName).trim(), email: email, timeZone: 'Europe/Berlin', phoneNumber: phone },\n  metadata: { source: 'vapi-voice-agent', notes: String(notes) }\n});\nreturn [{ json: { start, firstName, lastName, email, phone, notes, toolCallId: tc.id || '', body } }];" },
+      "id": "extract-booking-code", "name": "Extract Booking Params", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [720, -496]
+    },
+    {
+      "parameters": { "respondWith": "json", "responseBody": "={{ {results: [{toolCallId: (($json.body.message.toolCallList || [])[0] || {}).id || '', result: 'Unbekanntes Tool.'}]} }}", "options": {} },
+      "id": "1f412d69-5f47-4670-8d1e-3eb60bc3eaab", "name": "Respond Unknown Tool", "type": "n8n-nodes-base.respondToWebhook", "typeVersion": 1.5, "position": [720, 32]
+    },
+    {
+      "id": "8f97030d-4ddb-48f3-b8dc-76b0aabcdf71", "name": "Map Booking Result", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [1080, -496],
+      "parameters": { "jsCode": "const toolCallId = $('Extract Booking Params').first().json.toolCallId || '';\nconst d = $input.first().json;\nlet result;\nif (d && d.error) {\n  const msg = JSON.stringify(d.error.message || d.error || '');\n  if (msg.includes('maximum number of active bookings')) {\n    result = 'FEHLER TECHNISCH: Buchungssystem blockiert. KEINEN weiteren Slot versuchen. Rueckruf durch Herrn Stengelmair anbieten.';\n  } else if (msg.includes('already has booking') || msg.includes('not available') || msg.includes('no_available')) {\n    result = 'Slot nicht mehr frei. Einen anderen Termin anbieten.';\n  } else {\n    result = 'FEHLER TECHNISCH: Buchung fehlgeschlagen. KEINEN weiteren Slot versuchen. Rueckruf durch Herrn Stengelmair anbieten.';\n  }\n} else {\n  const data = (d && d.data) || d || {};\n  const uid = data.uid || data.id || '';\n  const start = data.start || $('Extract Booking Params').first().json.start || '';\n  result = 'Termin gebucht: ' + start + (uid ? ' (Buchungs-ID ' + uid + ')' : '') + '. Dem Anrufer bestaetigen.';\n}\nreturn [{ json: { toolCallId: toolCallId, result: result } }];" }
+    }
+  ],
+  "connections": {
+    "Vapi Webhook": { "main": [ [ { "node": "Event Router", "type": "main", "index": 0 } ] ] },
+    "Event Router": { "main": [
+      [ { "node": "Tool Name Router", "type": "main", "index": 0 } ],
+      [ { "node": "Extract Report Data", "type": "main", "index": 0 } ],
+      [ { "node": "Respond Default", "type": "main", "index": 0 } ]
+    ] },
+    "Tool Name Router": { "main": [
+      [ { "node": "Respond Tool Call", "type": "main", "index": 0 } ],
+      [ { "node": "Extract Slot Params", "type": "main", "index": 0 } ],
+      [ { "node": "Extract Booking Params", "type": "main", "index": 0 } ],
+      [ { "node": "Respond Unknown Tool", "type": "main", "index": 0 } ]
+    ] },
+    "Cal.com Check Slots": { "main": [ [ { "node": "Respond Slots", "type": "main", "index": 0 } ] ] },
+    "Extract Report Data": { "main": [ [ { "node": "Hermes Sign Report", "type": "main", "index": 0 } ] ] },
+    "Hermes Sign Report": { "main": [ [ { "node": "Hermes Send Report", "type": "main", "index": 0 } ] ] },
+    "Hermes Send Report": { "main": [ [ { "node": "Respond OK", "type": "main", "index": 0 } ] ] },
+    "Extract Slot Params": { "main": [ [ { "node": "Cal.com Check Slots", "type": "main", "index": 0 } ] ] },
+    "Extract Booking Params": { "main": [ [ { "node": "Cal.com Book", "type": "main", "index": 0 } ] ] },
+    "Cal.com Book": { "main": [ [ { "node": "Map Booking Result", "type": "main", "index": 0 } ] ] },
+    "Map Booking Result": { "main": [ [ { "node": "Respond Booking", "type": "main", "index": 0 } ] ] }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "Europe/Berlin", "callerPolicy": "workflowsFromSameOwner", "availableInMCP": true, "timeSavedMode": "fixed", "binaryMode": "separate" }
+}
